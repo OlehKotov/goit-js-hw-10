@@ -2,6 +2,7 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css"
+import errorIcon from "../img/iconizer-free-icon-font-cross-circle-3917206.svg";
 
 const ref= {
     btnStart: document.querySelector('[data-start]'),
@@ -11,7 +12,7 @@ const ref= {
     timerSeconds: document.querySelector('[data-seconds]'),
 };
 ref.btnStart.disabled = true;
-let userSelectedDate = null;
+// let userSelectedDate = null;
 
 const options = {
     enableTime: true,
@@ -29,10 +30,8 @@ const options = {
                 backgroundColor: 'red',
                 messageColor: 'white',
                 position: 'topRight',
-                maxWidth: '400px',
-                iconUrl: '../img/cancel-circle.svg',
-                iconColor: 'grey',
-                close: false,
+                iconUrl: errorIcon,
+                iconColor: '#959595',
             });
         }
     },
@@ -55,14 +54,14 @@ function convertMs(ms) {
   }
 function onTimer() {
     const selectedDates = flatPic.selectedDates[0];
-    timer = setInterval(()=> {
+    setInterval(()=> {
         const currentDate = new Date();
-        const count = selectedDates - currentDate;
+        const countDate = selectedDates - currentDate;
         ref.btnStart.disabled = true;
-        if(count < 0) {
+        if(countDate < 0) {
             return
         }
-          updateTimer(convertMs(count));
+          updateTimer(convertMs(countDate));
         }, 1000); 
 }
 
