@@ -2,43 +2,46 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 const form = document.querySelector('.form');
-
 form.addEventListener('submit', handleSubmit);
 
 function handleSubmit(event) {
   event.preventDefault();
-  const form = event.target;
-  const delayValue = form.elements.delay.value;
-  const check = form.elements.state.value;
+  const submitButton = document.querySelector('button');
+  const inputValue = document.querySelector('input[name="delay"]');
+  const stateInputs = document.querySelectorAll('input[name="state"]');
+  const delay = Number(inputValue.value);
+  const selectedState = Array.from(stateInputs).find(input => input.checked);
 
-  function createPromise(delay) {
+  if (delay >= 0 && selectedState) {
+    submitButton.disabled = true;
     const promise = new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (check === 'fulfilled') {
-          resolve(`✅ Fulfilled promise in ${delay}ms`);
+        if (selectedState.value === 'fulfilled') {
+          resolve(delay);
         } else {
-          reject(`❌ Rejected promise in ${delay}ms`);
+          reject(delay);
         }
       }, delay);
     });
-    return promise;
-  }
-  const promise = createPromise(delayValue);
-  promise
-    .then(e => {
-      iziToast.show({
-        position: 'topRight',
-        backgroundColor: '#73bf51',
-        message: e,
-      });
-    })
-    .catch(e => {
-      iziToast.show({
-        position: 'topRight',
-        backgroundColor: '#e77c7c',
-        message: e,
-      });
-    });
 
-  form.reset();
+    promise
+      .then(delay => {
+        iziToast.show({
+          position: 'topRight',
+          backgroundColor: '#73bf51',
+          message: `✅ Fulfilled promise in ${delay}ms`,
+        });
+      })
+      .catch(delay => {
+        iziToast.show({
+          position: 'topRight',
+          backgroundColor: '#e77c7c',
+          message: `❌ Rejected promise in ${delay}ms`,
+        });
+      })
+      .finally(() => {
+        submitButton.disabled = false;
+      });
+    form.reset();
+  }
 }
